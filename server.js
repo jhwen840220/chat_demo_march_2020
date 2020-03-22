@@ -8,4 +8,4 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(9922);
+app.listen(process.env.PORT || 3000);
