@@ -10,13 +10,24 @@ export const getData_byFB = (route) => {
   })
 }
 
-export const pushData_byFB = (route, postData ) => {
-    db.ref(route)
-      .push(postData)
-      .then(function() {
-        console.log('send message')
-      })
-      .catch(async function() {
-        console.log('send failed')
-      });
-  }
+export const pushData_byFB = (route, postData) => {
+  db.ref(route)
+    .push(postData)
+    .then(function() {
+      console.log('send message')
+    })
+    .catch(async function() {
+      console.log('send failed')
+    });
+}
+
+export const updateData_byFB = (route, postData) => {
+  db.ref(route)
+    .update(postData)
+    .then(function() {
+      console.log('send message')
+    })
+    .catch(async function() {
+      console.log('send failed')
+    });
+}

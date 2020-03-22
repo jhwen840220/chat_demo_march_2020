@@ -8,7 +8,8 @@ const config = {
   entry: ['@babel/polyfill', path.resolve(__dirname, './src/index.js')],
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: '[name].[hash:8].js'
+    filename: '[name].[hash:8].js',
+    publicPath: '/'
   },
   module: {
     rules: [

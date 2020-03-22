@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import moment from 'moment'
 import { ThemeProvider } from 'emotion-theming'
 import { Avatar, Button, Input } from '@material-ui/core';
-import { getData_byFB, pushData_byFB } from '../actions/basicActions'
+import { getData_byFB, pushData_byFB, updateData_byFB } from '../actions/basicActions'
 import { ContextStore } from '../stores/index'
 
 const Chat = (props) => {
@@ -18,7 +18,7 @@ const Chat = (props) => {
 
   useEffect(() => {
     //使用 WebSocket 的網址向 Server 開啟連結
-    let ws = new WebSocket('ws://localhost:9060')
+    let ws = new WebSocket('wss://websocket-ted.herokuapp.com/')
     window.ws = ws
     //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
     ws.onopen = () => {
@@ -33,17 +33,26 @@ const Chat = (props) => {
     //接收 Server 發送的訊息
     ws.onmessage = event => {
       const payload = JSON.parse(event.data)
-      if(payload.to == name) {
-        messageDispatch({payload: payload, type: 'ADD_MESSAGE'})
+      const msg = payload.msg
+      const friends = {
+        ...payload.friends,
+        id: msg.from,
+        name: msg.from
+      }
+      if(msg.to == name) {
+        messageDispatch({payload: msg, type: 'ADD_MESSAGE'})
+        console.log(friends)
+        friendsListDispatch({payload: friends, type: 'UPDATE_FRIENDS_LIST'})  
       }
     }   
 
     const fetchFriendsList = async () => {
       // 取得好友列表
-      const friendListPayload = await getData_byFB(`/friendList/${name}`)
+      const friendListPayload = await getData_byFB(`/friendsList/${name}`)
       if(friendListPayload) {
-        friendsListDispatch({payload: friendListPayload, type: 'GET_FRIENDS_LIST'})
-        handleSelectFriend(friendListPayload[0])
+        const payload = Object.keys(friendListPayload).map((index) => (friendListPayload[index]))
+        friendsListDispatch({payload: payload, type: 'GET_FRIENDS_LIST'})
+        handleSelectFriend(payload[0])
       }
     }
     fetchFriendsList()
@@ -53,6 +62,11 @@ const Chat = (props) => {
   useEffect(()=> {
     if(selectFriend) fetchMessages()
   }, [selectFriend])
+
+  useEffect(()=> {
+    const msgArea = document.getElementById('msg-area')
+    msgArea.scrollTop = msgArea.scrollHeight;
+  }, [messages])
 
 
   const fetchMessages = () => {
@@ -101,15 +115,30 @@ const Chat = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const postData = {  
-      "content": message,
-      "timestamp": new Date().getTime(),
-      "to": selectFriend.id,
-      "from": name
-    }
+      content: message,
+      timestamp: new Date().getTime(),
+      to: selectFriend.id,
+      from: name
+    };
+    const friendsListPostdata = {
+      id: selectFriend.id,
+      name: selectFriend.id,
+      timestamp: new Date().getTime(),
+      content: message
+    };
     if(message.trim().length) {
       pushData_byFB(`/messages/${name}`, postData)
       messageDispatch({payload: postData, type: 'ADD_MESSAGE'})
-      ws.send(JSON.stringify(postData))
+
+
+      updateData_byFB(`/friendsList/${name}/${selectFriend.id}`, friendsListPostdata)
+      friendsListDispatch({payload: friendsListPostdata, type: 'UPDATE_FRIENDS_LIST'})
+
+      const wsJSON = {
+        msg: postData,
+        friends: friendsListPostdata
+      }
+      ws.send(JSON.stringify(wsJSON))
     }
     setMessage('')
     return;
@@ -130,22 +159,22 @@ const Chat = (props) => {
                 <Avatar style={{width: '50px', height: '50px'}}>{friend.name.substring(0, 1)}</Avatar>
                 <div className="friend-info">
                   <div className="friend-name">{friend.name}</div>
-                  <div className="friend-txt">asd</div>
+                  <div className="friend-txt">{friend.content}</div>
                 </div>
-                <div className="latest-time">下午 1:10</div>
+                <div className="latest-time">{moment(friend.timestamp).format('a LT')}</div>
               </div>
             ))}
           </div>
         </FriendsBar>
         <TxtFrame>
           <div className="friend-title">Test yo</div>
-          <MessageArea>
+          <MessageArea id="msg-area">
             {messages.map((message, index) => (
               <div key={index}>
                 {message.from != name ?
                   <ThemeProvider theme={MsgTheme['friend']}>
                     <MsgBlock>
-                      <Avatar className="friend-avatar">{selectFriend.name.substring(0,1)}</Avatar>
+                      <Avatar className="friend-avatar">{selectFriend && selectFriend.name.substring(0,1)}</Avatar>
                       <div className="msg-display-block">{message.content}</div>
                       <div className="send-info-block">
                         <div>{moment(message.timestamp).format('a LT')}</div>

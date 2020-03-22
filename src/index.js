@@ -20,9 +20,9 @@ moment.updateLocale('zh-tw', {
 const App = () => {
   return (
     <Main>
-      <BrowserRouter>
+      <HashRouter>
         {routes}
-      </BrowserRouter>
+      </HashRouter>
     </Main>
   )
 }
