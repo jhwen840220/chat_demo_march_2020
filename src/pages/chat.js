@@ -41,7 +41,7 @@ const Chat = (props) => {
       }
       if(msg.to == name) {
         messageDispatch({payload: msg, type: 'ADD_MESSAGE'})
-        console.log(friends)
+        updateData_byFB(`/friendsList/${name}/${msg.from}`, friends)
         friendsListDispatch({payload: friends, type: 'UPDATE_FRIENDS_LIST'})  
       }
     }   
@@ -82,7 +82,7 @@ const Chat = (props) => {
       const toFriendMsgs = myMsgs.filter(msg=> msg.to == friend)
 
       const otherMsgs = payload[1] ? Object.keys(payload[1]).map((index) => (payload[1][index])) : []
-      const friendMsgs = otherMsgs.filter(msg=> msg.from == friend)
+      const friendMsgs = otherMsgs.filter(msg=> msg.from == friend && msg.to == name)
 
       
       const combinedPayload = toFriendMsgs.concat(friendMsgs)
@@ -156,7 +156,7 @@ const Chat = (props) => {
                 className={`friend-block${(selectFriend && selectFriend.id == friend.id) ? ' selected': ''}`}
                 key={index} 
                 onClick={()=>{handleSelectFriend(friend)}}>
-                <Avatar style={{width: '50px', height: '50px'}}>{friend.name.substring(0, 1)}</Avatar>
+                <Avatar style={{width: '50px', height: '50px'}}>{friend.name && friend.name.substring(0, 1)}</Avatar>
                 <div className="friend-info">
                   <div className="friend-name">{friend.name}</div>
                   <div className="friend-txt">{friend.content}</div>
@@ -167,7 +167,7 @@ const Chat = (props) => {
           </div>
         </FriendsBar>
         <TxtFrame>
-          <div className="friend-title">Test yo</div>
+          <div className="friend-title">{selectFriend && selectFriend.name}</div>
           <MessageArea id="msg-area">
             {messages.map((message, index) => (
               <div key={index}>
@@ -353,6 +353,7 @@ const MsgBlock = styled.div`
     transform: translateY(-50%);
   }
   .msg-display-block {
+    direction: ltr;
     position: relative;
     display: flex;
     align-items: center;

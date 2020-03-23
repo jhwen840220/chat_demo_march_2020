@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ReactDom from 'react-dom'
 import { HashRouter, BrowserRouter } from 'react-router-dom';
-import routes from './router'
+import Routes from './router'
 import './style/custom.scss'
 import Main from './layouts/main'
 import moment from 'moment';
@@ -21,7 +21,7 @@ const App = () => {
   return (
     <Main>
       <HashRouter>
-        {routes}
+        <Routes></Routes>
       </HashRouter>
     </Main>
   )
