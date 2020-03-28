@@ -4,12 +4,13 @@ import styled from '@emotion/styled'
 import Footer from '../components/footer'
 import { ContextStore, initState, actions } from '../stores/index'
 
-const { messageInitState, friendsListInitState } = initState
-const { messageReducer, friendsListReducer } = actions
+const { messageInitState, friendsListInitState, selectFriendInitState } = initState
+const { messageReducer, friendsListReducer, selectFriendReducer } = actions
 
 const Main = (props) => {
   const [messageState, messageDispatch] = useReducer(messageReducer, messageInitState);
-  const [friendsListState, friendsListDispatch] = useReducer(friendsListReducer, friendsListInitState)
+  const [friendsListState, friendsListDispatch] = useReducer(friendsListReducer, friendsListInitState);
+  const [selectFriendState, selectFriendDispatch] = useReducer(selectFriendReducer, selectFriendInitState);
 
   const { children } = props
 
@@ -18,8 +19,10 @@ const Main = (props) => {
       value={{
         messages: messageState.messages,
         friendsList: friendsListState.friendsList,
+        selectFriend: selectFriendState.selectFriend,
         messageDispatch,
-        friendsListDispatch
+        friendsListDispatch,
+        selectFriendDispatch
       }}>
       <ThemeProvider theme={theme['basic']}>
         <MainFrame>

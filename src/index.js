@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import ReactDom from 'react-dom'
 import { HashRouter, BrowserRouter } from 'react-router-dom';
 import Routes from './router'
-import './style/custom.scss'
-import Main from './layouts/main'
+import 'style/custom.scss'
+import Main from 'layouts/main'
 import moment from 'moment';
 import 'moment/locale/zh-tw';
 import { ContextStore } from './stores/index'

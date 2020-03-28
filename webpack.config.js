@@ -45,9 +45,22 @@ const config = {
     }),
     new CleanWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin()
-  ]
-
-
+  ],
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    // import alias
+    alias: {
+      actions: path.resolve(__dirname, './src/actions'),
+      components: path.resolve(__dirname, './src/components'),
+      layouts: path.resolve(__dirname, './src/layouts'),
+      pages: path.resolve(__dirname, './src/pages'),
+      plugins: path.resolve(__dirname, './src/plugins'),
+      stores: path.resolve(__dirname, './src/stores'),
+      style: path.resolve(__dirname, './src/style'),
+    },
+    // import 時可不寫附檔名
+    extensions: ['.js', '.css', '.scss', '.json'],
+  }
 }
 
 module.exports = config

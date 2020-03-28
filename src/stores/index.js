@@ -4,11 +4,13 @@ import React, { createContext } from 'react'
 
 const initState = {
   messageInitState: { messages: [] },
-  friendsListInitState : { friendsList: []}
+  friendsListInitState : { friendsList: [] },
+  selectFriendInitState : { selectFriend: null }
 }
 const ContextStore = createContext({
   messages: [],
-  friendsList: []
+  friendsList: [],
+  selectFriend: null
 })
 
 const actions = {
@@ -43,7 +45,8 @@ const actions = {
         })
       case 'UPDATE_FRIENDS_LIST':
         const friendIndex = state.friendsList.findIndex(friend=> friend.id == payload.id);
-        state.friendsList[friendIndex] = payload
+        if(friendIndex > -1) state.friendsList[friendIndex] = payload
+        else state.friendsList.push(payload)
         return Object.assign({}, state, {
           friendsList: state.friendsList.sort(function (a, b) {
             return b.timestamp - a.timestamp;
@@ -52,6 +55,17 @@ const actions = {
       case 'ADD_FRIEND':
         return Object.assign({}, state, {
           friendsList: state.friendsList.concat(payload)
+        })
+      default:
+        return state
+    }
+  },
+  selectFriendReducer: (state, action) => {
+    const { payload } = action
+    switch(action.type) {
+      case 'UPDATE_SELECT_FRIEND':
+        return Object.assign({}, state, {
+          selectFriend: payload
         })
       default:
         return state

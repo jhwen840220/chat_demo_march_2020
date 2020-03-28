@@ -1,18 +1,14 @@
 {
   "test0001": {
-    "test0002": {
-      "id": "test0002",
-      "name": "test0002"
-    }, 
-    "test0003": {
-      "id": "test0003",
-      "name": "test0003"
-    }
-  },
+    "id": "test0001",
+    "name": "test0001"
+  }, 
   "test0002": {
-    "test0001": {
-      "id": "test0001",
-      "name": "test0001"
-    }
+    "id": "test0002",
+    "name": "test0002"
+  }, 
+  "test0003": {
+    "id": "test0003",
+    "name": "test0003"
   }
 }
